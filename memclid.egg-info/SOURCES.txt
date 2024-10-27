@@ -1,0 +1,10 @@
+README.md
+setup.py
+memclid/__init__.py
+memclid/cli.py
+memclid.egg-info/PKG-INFO
+memclid.egg-info/SOURCES.txt
+memclid.egg-info/dependency_links.txt
+memclid.egg-info/entry_points.txt
+memclid.egg-info/requires.txt
+memclid.egg-info/top_level.txt

@@ -2,6 +2,11 @@ README.md
 setup.py
 memclid/__init__.py
 memclid/cli.py
+memclid/config.py
+memclid/constants.py
+memclid/exceptions.py
+memclid/memclid_socket.py
+memclid/svc_memclid.py
 memclid.egg-info/PKG-INFO
 memclid.egg-info/SOURCES.txt
 memclid.egg-info/dependency_links.txt

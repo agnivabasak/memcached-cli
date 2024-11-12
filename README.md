@@ -11,7 +11,8 @@ To run the code locally:
 -Run command: python3 -m venv env (This will create a env folder in the root directory)
 -To activate the virtual environment, run the command: source env/bin/activate
 -Run pip install -r requirements.txt to install the dependencies inside your virtual environment
--
+-Run pip install . to install the memclid cli tool and use memclid --help to get started
+-Run python3 setup.py sdist to create a source distribution (output in the dist folder)
 
 To run unit tests of the code:
 

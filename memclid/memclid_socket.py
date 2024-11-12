@@ -1,6 +1,6 @@
 import socket
 import re
-from memclid.exceptions import *
+from .exceptions import *
 
 class MemclidSocket:
     def __init__(self, sock=None):

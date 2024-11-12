@@ -1,7 +1,7 @@
 import click
 import re
-from memclid.exceptions import *
-from memclid.constants import *
+from .exceptions import *
+from .constants import *
 
 class MemclidUtility:
     def __init__(self, memclidSocket):
@@ -18,7 +18,7 @@ class MemclidUtility:
             msg = "get "+key+"\r\n"
             self.sock.send(msg)
             data = self.sock.receive()
-            valueReceivedRegEx = "^VALUE\stestKey\s(\d+)\s\d+\r\n(.*)\r\nEND\r\n$"
+            valueReceivedRegEx = "^VALUE\s"+key+"\s(\d+)\s\d+\r\n(.*)\r\nEND\r\n$"
             valueNotReceivedRegEx = "^END\r\n$"
             valueReceivedResult = re.search(valueReceivedRegEx,data)
             valueNotReceivedResult = re.search(valueNotReceivedRegEx,data)
@@ -63,7 +63,6 @@ class MemclidUtility:
 
     def handleAllExceptions(self,err):
         try:
-            print(err)
             raise err
         except (MemclidConnectionError, MemclidDisconnectError, MemclidConnectionBreakError, MemclidSendError, MemclidRecvError, MemclidErrorSentByServer, MemclidClientErrorSentByServer, MemclidServerErrorSentByServer, MemclidUnrecognizedResponseSentByServer) as err:
             click.echo(err.message)

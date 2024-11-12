@@ -11,5 +11,6 @@ memclid.egg-info/PKG-INFO
 memclid.egg-info/SOURCES.txt
 memclid.egg-info/dependency_links.txt
 memclid.egg-info/entry_points.txt
+memclid.egg-info/not-zip-safe
 memclid.egg-info/requires.txt
 memclid.egg-info/top_level.txt

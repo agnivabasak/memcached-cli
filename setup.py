@@ -17,5 +17,6 @@ setup(
     entry_points='''
         [console_scripts]
         memclid=memclid.cli:cli
-    ''' #since cli tool -> console_scritps, and memclid= means when you see command memclid look into memclid->cli.py->function cli
+    ''', #since cli tool -> console_scritps, and memclid= means when you see command memclid look into memclid->cli.py->function cli
+    zip_safe=False
 )

@@ -1,0 +1,14 @@
+[run]
+branch = True
+
+[report]
+exclude_also =
+    ; Don't complain if non-runnable code isn't run:
+    if __name__ == .__main__.:
+omit =
+    */memclid/constants.py
+    */memclid/exceptions.py
+    */memclid/memclid_socket.py
+
+[html]
+directory = coverage_report

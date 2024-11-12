@@ -1,8 +1,10 @@
 import click
-from memclid.config import DEFAULT_MEMCLID_HOST, DEFAULT_MEMCLID_PORT
-from memclid.memclid_socket import MemclidSocket
-from memclid.svc_memclid import MemclidUtility
-from memclid.constants import *
+
+from .exceptions import MemclidConnectionError, MemclidDisconnectError
+from .config import DEFAULT_MEMCLID_HOST, DEFAULT_MEMCLID_PORT
+from .memclid_socket import MemclidSocket
+from .svc_memclid import MemclidUtility
+from .constants import *
 
 class Context:
     #Defining a context manager (anything with __enter__ and __exit__ defined)
@@ -10,12 +12,26 @@ class Context:
         self.MEMCLID_HOST = host or DEFAULT_MEMCLID_HOST
         self.MEMCLID_PORT = port or DEFAULT_MEMCLID_PORT
     def __enter__(self): #Called when the  object is used with the "with" statement
-        self.MEMCLID_SOCKET = MemclidSocket()
-        self.MEMCLID_SOCKET.connect(self.MEMCLID_HOST,self.MEMCLID_PORT)
-        self.MEMCLID_UTILITY = MemclidUtility(self.MEMCLID_SOCKET)
+        try:
+            self.MEMCLID_SOCKET = MemclidSocket()
+            self.MEMCLID_SOCKET.connect(self.MEMCLID_HOST,self.MEMCLID_PORT)
+            self.MEMCLID_UTILITY = MemclidUtility(self.MEMCLID_SOCKET)
+        except MemclidConnectionError as err:
+            click.echo(err.message)
+            raise click.Abort()
+        except :
+            click.echo("An unexpected error occured")
+            raise click.Abort()
         return self
     def __exit__(self, exc_type, exc_value, tb):
-        self.MEMCLID_SOCKET.disconnect()
+        try:
+            self.MEMCLID_SOCKET.disconnect()
+        except MemclidDisconnectError as err:
+            click.echo(err.message)
+            raise click.Abort()
+        except :
+            click.echo("An unexpected error occured")
+            raise click.Abort()
 
 @click.group()
 @click.option("-h","--host", type=str, help="Host of memcached server (default is localhost)")

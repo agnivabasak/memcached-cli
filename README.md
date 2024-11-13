@@ -20,7 +20,7 @@ To run unit tests of the code:
 -Activate the virtual env like described above
 -Move to the tests directory: cd tests
 -Install the test dependencies:  pip install -r requirements.test.txt
--Run the tests(with coverage): python3 -m coverage run -m unittest test_svc_memclid -b
+-Run the tests(with coverage): python3 -m coverage run -m unittest discover -b
 -To get the coverage report run: python3 -m coverage report
 -To get it in html and interactive format run: python3 -m coverage html (This will generate the html reports in tests/coverage_report, the main one is index.html)
 -Run deactivate to exit the virtual environment

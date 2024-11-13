@@ -9,6 +9,7 @@ omit =
     */memclid/constants.py
     */memclid/exceptions.py
     */memclid/memclid_socket.py
+    */memclid/__init__.py
 
 [html]
 directory = coverage_report

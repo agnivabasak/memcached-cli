@@ -13,6 +13,7 @@ To run the code locally:
 -Run pip install -r requirements.txt to install the dependencies inside your virtual environment
 -Run pip install . to install the memclid cli tool and use memclid --help to get started
 -Run python3 setup.py sdist to create a source distribution (output in the dist folder)
+-Run deactivate to exit the virtual environment
 
 To run unit tests of the code:
 
@@ -22,3 +23,4 @@ To run unit tests of the code:
 -Run the tests(with coverage): python3 -m coverage run -m unittest test_svc_memclid -b
 -To get the coverage report run: python3 -m coverage report
 -To get it in html and interactive format run: python3 -m coverage html (This will generate the html reports in tests/coverage_report, the main one is index.html)
+-Run deactivate to exit the virtual environment

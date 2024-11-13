@@ -72,3 +72,39 @@ def set(ctx,key,value,flag,exptime):
         click.echo(result["message"])
     else:
         click.echo(result["message"])
+
+@cli.command()
+@click.argument("key",type=str)
+@click.argument("value",type=str,default="")
+@click.option("-f","--flag",type=int,default=0,help="flag/metadata to be stored along with the value (default is 0)")
+@click.option("-et","--exptime",type=int,default=3600,help="expiry time in seconds for the records (default is 3600 = 1 hour)")
+@click.pass_context
+def add(ctx,key,value,flag,exptime):
+    """
+    Add the value corresponding to a new key in memcached server
+
+    This command won't work if a record for the Key is already stored in the memcached server
+    """
+    result = ctx.obj.MEMCLID_UTILITY.add(key,value,flag,exptime)
+    if result["status"] == STATUS_RECORD_STORED:
+        click.echo(result["message"])
+    else:
+        click.echo(result["message"])
+
+@cli.command()
+@click.argument("key",type=str)
+@click.argument("value",type=str,default="")
+@click.option("-f","--flag",type=int,default=0,help="flag/metadata to be stored along with the value (default is 0)")
+@click.option("-et","--exptime",type=int,default=3600,help="expiry time in seconds for the records (default is 3600 = 1 hour)")
+@click.pass_context
+def replace(ctx,key,value,flag,exptime):
+    """
+    Replace the value corresponding to an existing key stored in memcached server
+
+    This command won't work if a record for the Key doesn't already exist in the memcached server
+    """
+    result = ctx.obj.MEMCLID_UTILITY.replace(key,value,flag,exptime)
+    if result["status"] == STATUS_RECORD_STORED:
+        click.echo(result["message"])
+    else:
+        click.echo(result["message"])

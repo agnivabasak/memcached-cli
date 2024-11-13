@@ -61,6 +61,56 @@ class MemclidUtility:
         except Exception as err:
             self.handleAllExceptions(err)
 
+    def add(self,key,value,flag,exptime):
+        try:
+            finalResult = {
+                "message": "",
+                "status": ""
+            }
+            msg = "add "+key+" "+str(flag)+" "+str(exptime)+" "+str(len(value))+"\r\n"+value+"\r\n"
+            self.sock.send(msg)
+            data = self.sock.receive()
+            storedRegex = "^STORED\r\n$"
+            notStoredRegex = "^NOT_STORED\r\n$"
+            storedResult = re.search(storedRegex,data)
+            notStoredResult = re.search(notStoredRegex,data)
+            if storedResult:
+                finalResult["status"]=STATUS_RECORD_STORED
+                finalResult["message"]="The data was saved successfully"
+            elif notStoredResult:
+                finalResult["status"]=STATUS_RECORD_NOT_STORED
+                finalResult["message"]="The record is already stored in memcached server. It could not be stored due to the preconditions of the command executed."
+            else:
+                raise MemclidUnrecognizedResponseSentByServer(self.sock.host,self.sock.port,data)
+            return finalResult
+        except Exception as err:
+            self.handleAllExceptions(err)
+
+    def replace(self,key,value,flag,exptime):
+        try:
+            finalResult = {
+                "message": "",
+                "status": ""
+            }
+            msg = "replace "+key+" "+str(flag)+" "+str(exptime)+" "+str(len(value))+"\r\n"+value+"\r\n"
+            self.sock.send(msg)
+            data = self.sock.receive()
+            storedRegex = "^STORED\r\n$"
+            notStoredRegex = "^NOT_STORED\r\n$"
+            storedResult = re.search(storedRegex,data)
+            notStoredResult = re.search(notStoredRegex,data)
+            if storedResult:
+                finalResult["status"]=STATUS_RECORD_STORED
+                finalResult["message"]="The value for the key was replaced successfully"
+            elif notStoredResult:
+                finalResult["status"]=STATUS_RECORD_NOT_STORED
+                finalResult["message"]="The key doesnt exist in the memcached server. It could not be stored due to the preconditions of the command executed."
+            else:
+                raise MemclidUnrecognizedResponseSentByServer(self.sock.host,self.sock.port,data)
+            return finalResult
+        except Exception as err:
+            self.handleAllExceptions(err)
+
     def handleAllExceptions(self,err):
         try:
             raise err

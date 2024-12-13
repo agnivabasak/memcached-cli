@@ -108,3 +108,35 @@ def replace(ctx,key,value,flag,exptime):
         click.echo(result["message"])
     else:
         click.echo(result["message"])
+
+@cli.command()
+@click.argument("key",type=str)
+@click.argument("value",type=str,default="")
+@click.pass_context
+def append(ctx,key,value):
+    """
+    Append the value to the value corresponding to an existing key stored in memcached server
+
+    This command won't work if a record for the Key doesn't already exist in the memcached server
+    """
+    result = ctx.obj.MEMCLID_UTILITY.append(key,value)
+    if result["status"] == STATUS_RECORD_STORED:
+        click.echo(result["message"])
+    else:
+        click.echo(result["message"])
+
+@cli.command()
+@click.argument("key",type=str)
+@click.argument("value",type=str,default="")
+@click.pass_context
+def prepend(ctx,key,value):
+    """
+    Prepend the value to the value corresponding to an existing key stored in memcached server
+
+    This command won't work if a record for the Key doesn't already exist in the memcached server
+    """
+    result = ctx.obj.MEMCLID_UTILITY.prepend(key,value)
+    if result["status"] == STATUS_RECORD_STORED:
+        click.echo(result["message"])
+    else:
+        click.echo(result["message"])

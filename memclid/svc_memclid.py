@@ -111,6 +111,58 @@ class MemclidUtility:
         except Exception as err:
             self.handleAllExceptions(err)
 
+    def append(self,key,value):
+        try:
+            finalResult = {
+                "message": "",
+                "status": ""
+            }
+            msg = "append "+key+" 0 3600 "+str(len(value))+"\r\n"+value+"\r\n" 
+            #the flag and exptime aren't changed by append but they are still required when sending the request
+            self.sock.send(msg)
+            data = self.sock.receive()
+            storedRegex = "^STORED\r\n$"
+            notStoredRegex = "^NOT_STORED\r\n$"
+            storedResult = re.search(storedRegex,data)
+            notStoredResult = re.search(notStoredRegex,data)
+            if storedResult:
+                finalResult["status"]=STATUS_RECORD_STORED
+                finalResult["message"]="The value was appended successfully"
+            elif notStoredResult:
+                finalResult["status"]=STATUS_RECORD_NOT_STORED
+                finalResult["message"]="The key most likely doesnt exist in the memcached server. It could not be stored."
+            else:
+                raise MemclidUnrecognizedResponseSentByServer(self.sock.host,self.sock.port,data)
+            return finalResult
+        except Exception as err:
+            self.handleAllExceptions(err)
+
+    def prepend(self,key,value):
+        try:
+            finalResult = {
+                "message": "",
+                "status": ""
+            }
+            msg = "prepend "+key+" 0 3600 "+str(len(value))+"\r\n"+value+"\r\n" 
+            #the flag and exptime aren't changed by append but they are still required when sending the request
+            self.sock.send(msg)
+            data = self.sock.receive()
+            storedRegex = "^STORED\r\n$"
+            notStoredRegex = "^NOT_STORED\r\n$"
+            storedResult = re.search(storedRegex,data)
+            notStoredResult = re.search(notStoredRegex,data)
+            if storedResult:
+                finalResult["status"]=STATUS_RECORD_STORED
+                finalResult["message"]="The value was prepended successfully"
+            elif notStoredResult:
+                finalResult["status"]=STATUS_RECORD_NOT_STORED
+                finalResult["message"]="The key most likely doesnt exist in the memcached server. It could not be stored."
+            else:
+                raise MemclidUnrecognizedResponseSentByServer(self.sock.host,self.sock.port,data)
+            return finalResult
+        except Exception as err:
+            self.handleAllExceptions(err)
+
     def handleAllExceptions(self,err):
         try:
             raise err

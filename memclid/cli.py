@@ -140,3 +140,92 @@ def prepend(ctx,key,value):
         click.echo(result["message"])
     else:
         click.echo(result["message"])
+
+@cli.command()
+@click.argument("key",type=str)
+@click.pass_context
+def gets(ctx,key):
+    """Get the cas unique value for the entry and the value corresponding to a key stored in memcached server"""
+    result = ctx.obj.MEMCLID_UTILITY.gets(key)
+    if result["status"] == STATUS_DATA_AVAILABLE:
+        click.echo(result["message"])
+        click.echo()
+        click.echo(f'Value:  {result["value"]}')
+        click.echo(f'Flag/Metadata:  {result["flag"]}')
+        click.echo(f'CAS Unique Value:  {result["cas_unique"]}')
+    else:
+        click.echo(result["message"])
+
+@cli.command()
+@click.argument("cas_unique",type=int)
+@click.argument("key",type=str)
+@click.argument("value",type=str,default="")
+@click.option("-f","--flag",type=int,default=0,help="flag/metadata to be stored along with the value (default is 0)")
+@click.option("-et","--exptime",type=int,default=3600,help="expiry time in seconds for the records (default is 3600 = 1 hour)")
+@click.pass_context
+def cas(ctx,cas_unique,key,value,flag,exptime):
+    """
+    Set the value corresponding to an existing key stored in memcached server using cas_unique
+    
+    It works given that the value was not modified since it was last fetched
+
+    This can be checked using the cas_unique number that can be fetched using the gets command
+
+    This command won't work if a record for the Key doesn't already exist in the memcached server
+    """
+    result = ctx.obj.MEMCLID_UTILITY.cas(key,value,cas_unique,flag,exptime)
+    if result["status"] == STATUS_RECORD_STORED:
+        click.echo(result["message"])
+    else:
+        click.echo(result["message"])
+
+@cli.command()
+@click.argument("key",type=str)
+@click.pass_context
+def delete(ctx,key):
+    """Deletes the key-value stored in memcached server"""
+    result = ctx.obj.MEMCLID_UTILITY.delete(key)
+    if result["status"] == STATUS_RECORD_DELETED:
+        click.echo(result["message"])
+    else:
+        click.echo(result["message"])
+
+@cli.command()
+@click.argument("key",type=str)
+@click.argument("value",type=int,default=0)
+@click.pass_context
+def incr(ctx,key,value):
+    """
+    Increment the value corresponding to an existing key stored in memcached server by the value specified by the user
+
+    This command won't work if a record for the Key doesn't already exist in the memcached server
+
+    This command also won't work if the existing value is not of Integer type
+    """
+    result = ctx.obj.MEMCLID_UTILITY.incr(key,value)
+    if result["status"] == STATUS_RECORD_STORED:
+        click.echo(result["message"])
+        click.echo()
+        click.echo(f'Updated Value:  {result["updated_value"]}')
+    else:
+        click.echo(result["message"])
+
+@cli.command()
+@click.argument("key",type=str)
+@click.argument("value",type=int,default=0)
+@click.pass_context
+def decr(ctx,key,value):
+    """
+    Decrement the value corresponding to an existing key stored in memcached server by the value specified by the user
+
+    This command won't work if a record for the Key doesn't already exist in the memcached server
+
+    This command also won't work if the existing value is not of Integer type
+    """
+    result = ctx.obj.MEMCLID_UTILITY.decr(key,value)
+    if result["status"] == STATUS_RECORD_STORED:
+        click.echo(result["message"])
+        click.echo()
+        click.echo(f'Updated Value:  {result["updated_value"]}')
+    else:
+        click.echo(result["message"])

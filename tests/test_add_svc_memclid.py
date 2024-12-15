@@ -28,7 +28,7 @@ class TestAddMemclidUtility(unittest.TestCase):
     def test_add_store_success(self):
         
         """
-            TEST 9 : Check if correct add request is being made and
+            TEST 1 : Check if correct add request is being made and
             storing the key-value pair using add successfully leads to a success result in the application
         """
         self.memclidSocket.receive.return_value = "STORED\r\n"
@@ -45,7 +45,7 @@ class TestAddMemclidUtility(unittest.TestCase):
     def test_add_store_failure(self):
         
         """
-            TEST 10 : Check if correct add request is being made and
+            TEST 2 : Check if correct add request is being made and
             failure while storing the key-value pair using add leads to a failure result in the application
         """
         self.memclidSocket.receive.return_value = "NOT_STORED\r\n"
@@ -62,7 +62,7 @@ class TestAddMemclidUtility(unittest.TestCase):
     def test_add_invalid_response(self):
 
         """
-            TEST 11 : Check if MemclidUnrecognizedResponseSentByServer is raised and handled when an invalid response is sent by the server
+            TEST 3 : Check if MemclidUnrecognizedResponseSentByServer is raised and handled when an invalid response is sent by the server
 
         """
         self.memclidSocket.receive.return_value = "RANDOM_RESPONSE_SENT_BY_SERVER\r\n"
@@ -73,7 +73,7 @@ class TestAddMemclidUtility(unittest.TestCase):
     def test_add_handle_random_exception(self):
 
         """
-            TEST 12 : Check if any random exception thrown is handled properly
+            TEST 4 : Check if any random exception thrown is handled properly
 
         """
 

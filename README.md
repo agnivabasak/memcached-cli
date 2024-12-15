@@ -17,7 +17,7 @@ To run the code locally:
 
 To run unit tests of the code:
 
--Activate the virtual env like described above
+-Activate a new virtual env for tests called test_env like described above
 -Move to the tests directory: cd tests
 -Install the test dependencies:  pip install -r requirements.test.txt
 -Run the tests(with coverage): python3 -m coverage run -m unittest discover -b

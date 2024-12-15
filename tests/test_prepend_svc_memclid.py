@@ -10,7 +10,7 @@ from memclid.constants import STATUS_RECORD_NOT_STORED, STATUS_RECORD_STORED
 from memclid.svc_memclid import MemclidUtility
 from memclid.memclid_socket import MemclidSocket
 
-class TestSetMemclidUtility(unittest.TestCase):
+class TestPrependMemclidUtility(unittest.TestCase):
     """
     Essentially these unit tests test that the application can interpret the messages sent by
     the Memcached server (through socket connection) and that it handles it correctly
@@ -24,53 +24,53 @@ class TestSetMemclidUtility(unittest.TestCase):
     def tearDown(self):
         self.memclidUtility = None
         self.memclidSocket = None
-    
-    def test_set_store_success(self):
+
+    def test_prepend_store_success(self):
         
         """
-            TEST 1 : Check if correct set request is being made and 
-            storing the key-value pair successfully leads to a success result in the application
+            TEST 1 : Check if correct prepend request is being made and
+            prepending the value for an already exisiting key successfully leads to a success result in the application
         """
         self.memclidSocket.receive.return_value = "STORED\r\n"
         expectedResult = {
-            "message": "The data was saved successfully",
+            "message": "The value was prepended successfully",
             "status": STATUS_RECORD_STORED
         }
 
-        actualResult=self.memclidUtility.set("testKey","testValue",10,60)
-        self.memclidSocket.send.assert_called_once_with(msg="set testKey 10 60 9\r\ntestValue\r\n")
+        actualResult=self.memclidUtility.prepend("testKey","prependedValue")
+        self.memclidSocket.send.assert_called_once_with(msg="prepend testKey 0 3600 14\r\nprependedValue\r\n")
         self.memclidSocket.receive.assert_called_once();
         self.assertDictEqual(actualResult,expectedResult)
 
-    def test_set_store_failure(self):
+    def test_prepend_store_failure(self):
         
         """
-            TEST 2 : Check if correct set request is being made and 
-            failure while storing the key-value pair leads to a failure result in the application
+            TEST 2 : Check if correct prepend request is being made and
+            failure while storing the key-value pair using prepend leads to a failure result in the application
         """
         self.memclidSocket.receive.return_value = "NOT_STORED\r\n"
         expectedResult = {
-            "message": "The data could not be stored",
+            "message": "The key most likely doesnt exist in the memcached server. It could not be stored.",
             "status": STATUS_RECORD_NOT_STORED
         }
 
-        actualResult=self.memclidUtility.set("testKey","testValue",10,60)
-        self.memclidSocket.send.assert_called_once_with(msg="set testKey 10 60 9\r\ntestValue\r\n")
+        actualResult=self.memclidUtility.prepend("testKey","prependedValue")
+        self.memclidSocket.send.assert_called_once_with(msg="prepend testKey 0 3600 14\r\nprependedValue\r\n")
         self.memclidSocket.receive.assert_called_once();
         self.assertDictEqual(actualResult,expectedResult)
 
-    def test_set_invalid_response(self):
+    def test_prepend_invalid_response(self):
 
         """
             TEST 3 : Check if MemclidUnrecognizedResponseSentByServer is raised and handled when an invalid response is sent by the server
 
         """
-        self.memclidSocket.receive.return_value = "UNRECOGNIZED_RESPONSE_SENT_BY_SERVER\r\n"
+        self.memclidSocket.receive.return_value = "UNKNOWN_RESPONSE_SENT_BY_SERVER\r\n"
 
         with self.assertRaises(click.exceptions.Abort):
-            self.memclidUtility.set("testKey","testValue",0,3600)
+            self.memclidUtility.prepend("testKey","prependedValue")
 
-    def test_set_handle_random_exception(self):
+    def test_prepend_handle_random_exception(self):
 
         """
             TEST 4 : Check if any random exception thrown is handled properly
@@ -80,6 +80,8 @@ class TestSetMemclidUtility(unittest.TestCase):
         self.memclidSocket.send.side_effect = Exception("Random Exception")
 
         with self.assertRaises(click.exceptions.Abort):
-            self.memclidUtility.set("testKey","testValue",0,3600)
+            self.memclidUtility.prepend("testKey","prependedValue")
+    
+
 if __name__ == '__main__':
     unittest.main()

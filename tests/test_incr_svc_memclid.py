@@ -10,7 +10,7 @@ from memclid.constants import STATUS_RECORD_NOT_STORED, STATUS_RECORD_STORED
 from memclid.svc_memclid import MemclidUtility
 from memclid.memclid_socket import MemclidSocket
 
-class TestSetMemclidUtility(unittest.TestCase):
+class TestIncrMemclidUtility(unittest.TestCase):
     """
     Essentially these unit tests test that the application can interpret the messages sent by
     the Memcached server (through socket connection) and that it handles it correctly
@@ -25,52 +25,56 @@ class TestSetMemclidUtility(unittest.TestCase):
         self.memclidUtility = None
         self.memclidSocket = None
     
-    def test_set_store_success(self):
+    def test_incr_store_success(self):
         
         """
-            TEST 1 : Check if correct set request is being made and 
-            storing the key-value pair successfully leads to a success result in the application
+            TEST 1 : Check if correct incr request is being made and
+            incrementing the value corresponding to the key using incr 
+            successfully leads to a success result in the application
         """
-        self.memclidSocket.receive.return_value = "STORED\r\n"
+        self.memclidSocket.receive.return_value = "10\r\n"
         expectedResult = {
-            "message": "The data was saved successfully",
+            "updated_value": "10",
+            "message": "The value for the key was incremented successfully",
             "status": STATUS_RECORD_STORED
         }
 
-        actualResult=self.memclidUtility.set("testKey","testValue",10,60)
-        self.memclidSocket.send.assert_called_once_with(msg="set testKey 10 60 9\r\ntestValue\r\n")
+        actualResult=self.memclidUtility.incr("testKey",5)
+        self.memclidSocket.send.assert_called_once_with(msg="incr testKey 5\r\n")
         self.memclidSocket.receive.assert_called_once();
         self.assertDictEqual(actualResult,expectedResult)
 
-    def test_set_store_failure(self):
+    def test_incr_store_failure(self):
         
         """
-            TEST 2 : Check if correct set request is being made and 
-            failure while storing the key-value pair leads to a failure result in the application
+            TEST 2 : Check if correct incr request is being made and
+            failure while incrementing the value corresponding to the key
+            using incr leads to a failure result in the application
         """
-        self.memclidSocket.receive.return_value = "NOT_STORED\r\n"
+        self.memclidSocket.receive.return_value = "NOT_FOUND\r\n"
         expectedResult = {
-            "message": "The data could not be stored",
+            "updated_value": None,
+            "message": "The key doesnt exist in the memcached server. It could not be incremented due to the preconditions of the command executed.",
             "status": STATUS_RECORD_NOT_STORED
         }
 
-        actualResult=self.memclidUtility.set("testKey","testValue",10,60)
-        self.memclidSocket.send.assert_called_once_with(msg="set testKey 10 60 9\r\ntestValue\r\n")
+        actualResult=self.memclidUtility.incr("testKey",5)
+        self.memclidSocket.send.assert_called_once_with(msg="incr testKey 5\r\n")
         self.memclidSocket.receive.assert_called_once();
         self.assertDictEqual(actualResult,expectedResult)
 
-    def test_set_invalid_response(self):
+    def test_incr_invalid_response(self):
 
         """
             TEST 3 : Check if MemclidUnrecognizedResponseSentByServer is raised and handled when an invalid response is sent by the server
 
         """
-        self.memclidSocket.receive.return_value = "UNRECOGNIZED_RESPONSE_SENT_BY_SERVER\r\n"
+        self.memclidSocket.receive.return_value = "RANDOM_RESPONSE_SENT_BY_SERVER\r\n"
 
         with self.assertRaises(click.exceptions.Abort):
-            self.memclidUtility.set("testKey","testValue",0,3600)
+            self.memclidUtility.incr("testKey",5)
 
-    def test_set_handle_random_exception(self):
+    def test_decr_handle_random_exception(self):
 
         """
             TEST 4 : Check if any random exception thrown is handled properly
@@ -80,6 +84,7 @@ class TestSetMemclidUtility(unittest.TestCase):
         self.memclidSocket.send.side_effect = Exception("Random Exception")
 
         with self.assertRaises(click.exceptions.Abort):
-            self.memclidUtility.set("testKey","testValue",0,3600)
+            self.memclidUtility.incr("testKey",5)
+    
 if __name__ == '__main__':
     unittest.main()

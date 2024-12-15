@@ -28,7 +28,7 @@ class TestReplaceMemclidUtility(unittest.TestCase):
     def test_replace_store_success(self):
         
         """
-            TEST 13 : Check if correct replace request is being made and
+            TEST 1 : Check if correct replace request is being made and
             replacing the value for an already exisitng key successfully leads to a success result in the application
         """
         self.memclidSocket.receive.return_value = "STORED\r\n"
@@ -45,7 +45,7 @@ class TestReplaceMemclidUtility(unittest.TestCase):
     def test_replace_store_failure(self):
         
         """
-            TEST 14 : Check if correct replace request is being made and
+            TEST 2 : Check if correct replace request is being made and
             failure while storing the key-value pair using add leads to a failure result in the application
         """
         self.memclidSocket.receive.return_value = "NOT_STORED\r\n"
@@ -62,7 +62,7 @@ class TestReplaceMemclidUtility(unittest.TestCase):
     def test_replace_invalid_response(self):
 
         """
-            TEST 15 : Check if MemclidUnrecognizedResponseSentByServer is raised and handled when an invalid response is sent by the server
+            TEST 3 : Check if MemclidUnrecognizedResponseSentByServer is raised and handled when an invalid response is sent by the server
 
         """
         self.memclidSocket.receive.return_value = "UNKNOWN_RESPONSE_SENT_BY_SERVER\r\n"
@@ -73,7 +73,7 @@ class TestReplaceMemclidUtility(unittest.TestCase):
     def test_replace_handle_random_exception(self):
 
         """
-            TEST 16 : Check if any random exception thrown is handled properly
+            TEST 4 : Check if any random exception thrown is handled properly
 
         """
 
